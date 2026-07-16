@@ -16,6 +16,12 @@ from app.database import Base, get_db
 from app.main import app
 from app.config import settings
 
+if not settings.db_name.endswith("test"):
+    raise RuntimeError(
+        f"Refusing to run tests against non-test database '{settings.db_name}'. "
+        "Set DB_NAME to a name ending with 'test'."
+    )
+
 
 @pytest.fixture
 def db_session():
