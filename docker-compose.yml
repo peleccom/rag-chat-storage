@@ -1,0 +1,70 @@
+services:
+  api:
+    build: .
+    ports:
+      - "5100:8000"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      adminer:
+        condition: service_started
+    volumes:
+      - .:/app
+    command: sh -c "uv run alembic upgrade head && uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:-ragchat}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-ragchat_secret}
+      POSTGRES_DB: ${DB_NAME:-ragchat}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-ragchat} -d ${DB_NAME:-ragchat}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - "5102:8080"
+    depends_on:
+      - db
+
+  db_test:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ragchat_test
+      POSTGRES_PASSWORD: ragchat_test_secret
+      POSTGRES_DB: ragchat_test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ragchat_test -d ragchat_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  test:
+    build: .
+    depends_on:
+      db_test:
+        condition: service_healthy
+    environment:
+      DB_HOST: db_test
+      DB_PORT: 5432
+      DB_USER: ragchat_test
+      DB_PASSWORD: ragchat_test_secret
+      DB_NAME: ragchat_test
+      API_KEY: test-api-key
+      RATE_LIMIT_PER_MINUTE: 10000
+    volumes:
+      - .:/app
+    command: sh -c "uv sync --frozen --all-extras && uv run pytest -v"
+
+volumes:
+  pgdata:
