@@ -35,6 +35,21 @@ def test_create_message_with_context(client, auth_headers):
     assert resp.json()["context"] == "doc1.pdf, doc2.pdf"
 
 
+def test_create_message_sender_system(client, auth_headers):
+    session_resp = client.post(
+        "/sessions", json={"user_id": "user1"}, headers=auth_headers
+    )
+    session_id = session_resp.json()["id"]
+
+    resp = client.post(
+        f"/sessions/{session_id}/messages",
+        json={"sender": "system", "content": "System message"},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 201
+    assert resp.json()["sender"] == "system"
+
+
 def test_list_messages(client, auth_headers):
     session_resp = client.post(
         "/sessions", json={"user_id": "user1"}, headers=auth_headers
