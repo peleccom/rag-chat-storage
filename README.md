@@ -77,6 +77,22 @@ See task [Task](TASK.md).
    - ReDoc: http://localhost:5100/redoc
    - Adminer (DB GUI): http://localhost:5102
 
+### Production Deployment
+
+```bash
+docker compose -f docker-compose.prod.yml up -d
+```
+
+The production variant differs from the dev setup:
+- **No bind mounts** — code is baked into the image, not synced live
+- **No `--reload`** — runs in production mode
+- **No Adminer** — DB GUI is excluded
+- **No test services** — `db_test` and `test` are omitted
+- **`restart: unless-stopped`** — services auto-restart on failure
+- **No exposed DB port** — PostgreSQL is internal only
+
+API accessible at `http://localhost:5100`.
+
 ### Database Migrations
 
 Migrations run automatically on startup via `alembic upgrade head`. To create new migrations after model changes:

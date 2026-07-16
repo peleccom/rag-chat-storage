@@ -55,6 +55,18 @@ def test_list_messages(client, auth_headers):
     assert len(data["items"]) == 3
 
 
+def test_list_messages_empty(client, auth_headers):
+    session_resp = client.post(
+        "/sessions", json={"user_id": "user1"}, headers=auth_headers
+    )
+    session_id = session_resp.json()["id"]
+
+    resp = client.get(f"/sessions/{session_id}/messages", headers=auth_headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["total"] == 0
+    assert len(data["items"]) == 0
+
 def test_messages_pagination(client, auth_headers):
     session_resp = client.post(
         "/sessions", json={"user_id": "user1"}, headers=auth_headers
