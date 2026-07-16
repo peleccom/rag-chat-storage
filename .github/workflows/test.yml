@@ -8,8 +8,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run tests
-        run: docker compose run --rm test
+      - name: Test with coverage
+        run: docker compose run --rm test 2>&1 | tee output.log
+
+      - name: Coverage summary
+        if: always()
+        run: |
+          echo "## Coverage Report" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          grep -E "^(Name|---|app/|TOTAL)" output.log >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Upload coverage
         uses: actions/upload-artifact@v4
