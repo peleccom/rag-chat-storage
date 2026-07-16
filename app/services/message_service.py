@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 from uuid import UUID
 
 from sqlalchemy.orm import Session
@@ -23,8 +22,6 @@ def create_message(db: Session, session_id: UUID, data: MessageCreate) -> Messag
         context=data.context,
     )
     db.add(message)
-    session = db.query(SessionModel).filter(SessionModel.id == session_id).first()
-    session.updated_at = datetime.now(timezone.utc)
     db.commit()
     db.refresh(message)
     return message
