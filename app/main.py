@@ -56,13 +56,16 @@ app.include_router(messages.router)
 @app.get("/health", tags=["Health"])
 def health_check():
     db_status = "unhealthy"
+    db = None
     try:
         db = SessionLocal()
         db.execute(text("SELECT 1"))
         db_status = "healthy"
-        db.close()
     except Exception:
         logger.exception("Database health check failed")
+    finally:
+        if db is not None:
+            db.close()
 
     return {"status": "healthy", "database": db_status}
 
