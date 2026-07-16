@@ -117,6 +117,22 @@ def test_update_session_empty_body(client, auth_headers):
     assert resp.json()["title"] == "Original"
 
 
+def test_update_session_updates_updated_at(client, auth_headers):
+    create_resp = client.post(
+        "/sessions", json={"user_id": "user1", "title": "Before"}, headers=auth_headers
+    )
+    session_id = create_resp.json()["id"]
+    original_updated = create_resp.json()["updated_at"]
+
+    resp = client.patch(
+        f"/sessions/{session_id}",
+        json={"title": "After"},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200
+    assert resp.json()["updated_at"] != original_updated
+
+
 def test_session_message_count(client, auth_headers):
     session_resp = client.post(
         "/sessions", json={"user_id": "user1"}, headers=auth_headers
