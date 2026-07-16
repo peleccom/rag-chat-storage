@@ -16,6 +16,8 @@ class Settings(BaseSettings):
 
     log_level: str = "INFO"
 
+    env_name: str = "local"
+
     database_url: str | None = None
 
     @property

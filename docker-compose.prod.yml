@@ -5,6 +5,8 @@ services:
       - "5100:8000"
     env_file:
       - .env
+    environment:
+      ENV_NAME: prod
     depends_on:
       db:
         condition: service_healthy

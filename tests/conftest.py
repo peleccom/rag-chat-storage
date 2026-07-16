@@ -6,6 +6,7 @@ os.environ.setdefault("DB_USER", "ragchat_test")
 os.environ.setdefault("DB_PASSWORD", "ragchat_test_secret")
 os.environ.setdefault("DB_NAME", "ragchat_test")
 os.environ["API_KEY"] = "test-api-key"
+os.environ["ENV_NAME"] = "test"
 
 import pytest
 from fastapi.testclient import TestClient

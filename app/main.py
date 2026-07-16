@@ -19,6 +19,7 @@ from app.middleware.rate_limit import limiter
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    logger.info("Starting server — env_name=%s", settings.env_name)
     yield
 
 
@@ -27,7 +28,7 @@ app = FastAPI(
     description="Microservice for storing RAG chatbot chat histories",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc",
+    redoc_url=None if settings.env_name != "local" else "/redoc",
     lifespan=lifespan,
     swagger_ui_parameters={"persistAuthorization": True},
 )
