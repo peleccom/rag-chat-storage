@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     db_password: str = "ragchat_secret"
     db_name: str = "ragchat"
 
-    api_key: str = "change-me"
+    api_key: str
 
     rate_limit_per_minute: int = 60
 
