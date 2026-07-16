@@ -27,7 +27,5 @@ class Settings(BaseSettings):
             f"@{self.db_host}:{self.db_port}/{self.db_name}"
         )
 
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
-
 
 settings = Settings()
