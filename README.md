@@ -122,6 +122,10 @@ docker compose up -d db_test
 uv sync --all-extras && pytest -v
 ```
 
+## CI/CD
+
+Tests run automatically on each push and pull request via GitHub Actions (`.github/workflows/test.yml`).
+
 ## Environment Variables
 
 | Variable                | Default            | Description                          |
